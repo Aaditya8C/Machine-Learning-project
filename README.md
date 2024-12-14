@@ -1,11 +1,13 @@
-#Personalized Virtual Skincare Advisor
-A machine learning project with flask stream-lit and CNN neural network algorithms
-This application recommends personalised skincare and makeup products based on skin metrics inferred from a user's selfie, utilizing advanced Computer Vision algorithms. It employs image processing and CNN models to extract key skin attributes such as Skin Tone, Skin Type, and Acne Concern Level. The recommendations are generated using cosine similarity to identify the most relevant products for the user. The web application is developed using React for the frontend and Flask for the backend.
-<br>
-Author-Om Lahane
 # Personalised Skincare and Makeup Recommendation Application
 
+## About
+This application recommends personalised skincare and makeup products by analyzing a user's selfie through advanced Computer Vision algorithms. Using image processing and CNN models, the app determines key skin metrics such as Skin Tone, Skin Type, and Acne Concern Level. It recommends products based on cosine similarity to match user attributes with the most relevant items.
 
+### Tools Used:
+- **Frontend**: React  
+- **Backend**: Flask, OpenCV, TensorFlow  
+- **Libraries**: face-api.js for face detection, EfficientNet for CNN models  
+- **Dataset Sources**: Kaggle and Myntra Beauty Section  
 
 ---
 
@@ -114,13 +116,6 @@ The system matches user skin metrics and concerns with product attributes using 
     npm start
     ```
 5. Access the application at `http://localhost:3000`.
-
----
-
-## Tech Stack
-
-- **Frontend**: React
-- **Backend**: Flask, OpenCV, TensorFlow
 
 ---
 
