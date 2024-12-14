@@ -1,5 +1,7 @@
-# This application recommends personalised skincare and makeup products by analyzing a user's selfie through advanced Computer Vision algorithms. Using image processing and CNN models, the app determines key skin metrics such as Skin Tone, Skin Type, and Acne Concern Level. It recommends products based on cosine similarity to match user attributes with the most relevant items.
+# Peronalized Virtual Skincare Advisor
 
+## About
+This application recommends personalised skincare and makeup products by analyzing a user's selfie through advanced Computer Vision algorithms. Using image processing and CNN models, the app determines key skin metrics such as Skin Tone, Skin Type, and Acne Concern Level. It recommends products based on cosine similarity to match user attributes with the most relevant items.
 
 ### Tools Used:
 - **Frontend**: React  
