@@ -53,6 +53,7 @@ const otherConcerns = [
 
 const Form = () => {
   const { state } = useLocation();
+  if (state.data.type == "Oil") state.data.type = "Oily";
   if (state !== null) {
     data = state.data;
     console.log(data);
