@@ -23,12 +23,12 @@ import { putForm } from "../controllers/actions";
 
 const skinToneValues = [1, 2, 3, 4, 5, 6];
 const skinToneColors = [
-  "rgb(249, 245, 236)",
-  "rgb(250, 245, 234)",
-  "rgb(240, 227, 171)",
-  "rgb(206, 172, 104)",
-  "rgb(105, 59, 41)",
   "rgb(33, 28, 40)",
+  "rgb(105, 59, 41)",
+  "rgb(206, 172, 104)",
+  "rgb(240, 227, 171)",
+  "rgb(250, 245, 234)",
+  "rgb(249, 245, 236)",
 ];
 
 const skinTypes = ["All", "Oil", "Normal", "Dry"];

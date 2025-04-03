@@ -13,3 +13,7 @@ Jinja2==2.11.2
 click==7.1.2
 reparse==3.0
 Pillow
+
+# python -m venv venv
+# source venv/bin/activate
+# deactivate
