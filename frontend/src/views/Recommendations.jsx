@@ -1,121 +1,110 @@
-import React, { useState, useEffect } from 'react';
+import React from "react";
+import { useLocation } from "react-router";
 
-// MUI
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import FormLabel from '@mui/material/FormLabel';
-import Typography from '@mui/material/Typography';
+// mui components
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
+import ProductCard from "./Components/ProductCard";
 
-import ProductCard from './Components/ProductCard'
-import { useLocation } from 'react-router';
+// color theme
+const colors = {
+  background: "#fff7f0", // light gray background
+  sectionBg: "#ffffff", // white section cards
+  title: "#2c3e50", // dark blue-gray title
+  border: "#e0e0e0", // subtle borders
+};
 
+// reusable product section component
+const ProductSection = ({ title, products }) => {
+  if (!products || products.length === 0) return null; // avoid rendering empty sections
 
-
-// {'face-moisturisers': [{'brand': 'azani active care',
-//    'name': 'unisex acne rescue cream - 30 ml',
-//    'price': '₹ 399',
-//    'url': 'https://www.myntra.com/face-moisturisers/azani-active-care/azani-active-care-unisex-acne-rescue-cream---30-ml/15322518/buy',
-//    'skin type': 'all',
-//    'concern': ['deep nourishment', 'acne', 'blemishes', 'dull skin']},
-
-const Products = {
-    
-    skinCare:
-    {
-        'face-moisturisers':
-            [{
-                'brand': 'azani active care',
-                'name': 'unisex acne rescue cream - 30 ml',
-                'price': '₹ 399',
-                'url': 'https://www.myntra.com/face-moisturisers/azani-active-care/azani-active-care-unisex-acne-rescue-cream---30-ml/15322518/buy',
-                'skin type': 'all',
-                'concern': ['deep nourishment', 'acne', 'blemishes', 'dull skin']
-            },
-            {
-                'brand': 'mamaearth',
-                'name': 'vitamin c face milk with peach for skin illumination 100 ml',
-                'price': '₹ 404',
-                'url': 'https://www.myntra.com/face-moisturisers/mamaearth/mamaearth-vitamin-c-face-milk-with-peach-for-skin-illumination-100-ml/12411986/buy',
-                'skin type': 'all',
-                'concern': ['acne', 'blemishes', 'pigmentation', 'dull skin']
-            }]
-    },
-    makeUp:
-    {
-        'foundations':
-            [{
-                'brand': 'wet n wild',
-                'name': 'sustainable photo focus matte face primer - partners in prime',
-                'price': '₹ 454',
-                'url': 'https://www.myntra.com/foundation-and-primer/wet-n-wild/wet-n-wild-sustainable-photo-focus-matte-face-primer---partners-in-prime/12045988/buy',
-                'skin type': 'normal',
-                'skin tone': 'light to medium'
-            },
-            {
-                'brand': 'faces canada',
-                'name': 'ultime pro makeup fixer',
-                'price': '₹ 486',
-                'url': 'https://www.myntra.com/foundation-and-primer/faces-canada/faces-canada-ultime-pro-makeup-fixer/2421530/buy',
-                'skin type': 'normal',
-                'skin tone': 'light to medium'
-            }]
-    }
-}
-
+  return (
+    <Box
+      sx={{
+        mb: 6,
+        p: 3,
+        backgroundColor: colors.sectionBg,
+        borderRadius: 2,
+        boxShadow: 1,
+        border: `1px solid ${colors.border}`,
+      }}
+    >
+      <Typography
+        variant="h5"
+        mb={3}
+        sx={{
+          color: colors.title,
+          textTransform: "capitalize",
+          fontWeight: 600,
+        }}
+      >
+        {title.replace(/-/g, " ")}
+      </Typography>
+      <Grid container spacing={3}>
+        {products.slice(0, 4).map((prod, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <ProductCard
+              name={prod.name}
+              brand={prod.brand}
+              image={prod.img}
+              price={prod.price}
+              url={prod.url}
+              concern={prod.concern}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
 
 const Recommendations = () => {
-    const {state} = useLocation();
-    const {data} = state; 
-    const {general, makeup} = data;
-    return <>
-        <Container sx={{ marginTop: "2vh", padding: 1 }} alignitems="center" width="inherit">
-            <Typography gutterBottom variant="h4" component="div" marginTop="2vh" textAlign="center">
-                Skin care
-            </Typography>
-            {Object.keys(general).map((type, products) => {
-                return (<div><Typography gutterBottom variant="h5" component="div" marginTop="2vh" color="text.secondary">
-                            {type}
-                        </Typography>
-                        <Grid container spacing={1}>
-                    {general[type].slice(0,4).map((prod) => {
-                        return <Grid item xs={6} md={3}>
-                            <ProductCard
-                                name={prod.name}
-                                brand={prod.brand}
-                                image={prod.img}
-                                price={prod.price}
-                                url={prod.url}
-                                concern={prod.concern} />
-                        </Grid>
-                    })}
-                </Grid></div>)
-            })}
+  const { state } = useLocation();
+  const { data } = state || {};
+  const { general, makeup } = data || {};
 
-            <Typography gutterBottom variant="h4" component="div" marginTop="2vh" textAlign="center">
-                Make up
-            </Typography>
+  return (
+    <Container
+      maxWidth="lg"
+      sx={{
+        py: 5,
+        backgroundColor: colors.background,
+        minHeight: "100vh",
+      }}
+    >
+      {/* skin care section */}
+      <Typography
+        variant="h4"
+        textAlign="center"
+        mb={4}
+        sx={{ fontWeight: "bold", color: colors.title }}
+      >
+        Skin Care Recommendations
+      </Typography>
 
-            <FormLabel component="legend">{ }</FormLabel>
-            {/* {Object.keys(Products.makeUp).map((type, products)=>{
-            return (<div><FormLabel component="legend">{type}</FormLabel><Grid container spacing={1}> */}
-            <div>
-            <Grid container spacing={1}>
-            {makeup.map((prod) => {
-                return <Grid item xs={6} md={3}>
-                    <ProductCard
-                        name={prod.name}
-                        brand={prod.brand}
-                        image={prod.img}
-                        price={prod.price}
-                        url={prod.url}
-                        concern={prod.concern} />
-                </Grid>
-            })}
-             </Grid></div>
-            {/* </Grid></div>) */}
-            {/* // })} */}
-        </Container>
-    </>
+      {general &&
+        Object.keys(general).map((type) => (
+          <ProductSection key={type} title={type} products={general[type]} />
+        ))}
+
+      <Divider sx={{ my: 6, borderColor: colors.border }} />
+
+      {/* makeup section */}
+      <Typography
+        variant="h4"
+        textAlign="center"
+        mb={4}
+        sx={{ fontWeight: "bold", color: colors.title }}
+      >
+        Makeup Recommendations
+      </Typography>
+
+      <ProductSection title="Makeup" products={makeup} />
+    </Container>
+  );
 };
 
 export default Recommendations;
