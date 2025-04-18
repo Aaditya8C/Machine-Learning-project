@@ -80,8 +80,19 @@ def prediction_skinmate(img_path):
     img_array /= 255.0
     img_array = np.expand_dims(img_array, axis=0)
 
-    preds = skinmate_model(img_array, training=False).numpy()
-    preds_normalized = preds * 1000
+    # convert to tf tensor
+    img_tensor = tf.convert_to_tensor(img_array, dtype=tf.float32)
+
+    # get prediction function from saved model
+    infer = skinmate_model.signatures["serving_default"]
+
+    # run inference
+    preds = infer(tf.constant(img_tensor))  # returns a dict
+
+    # extract predictions (first value from dict)
+    preds_values = list(preds.values())[0].numpy()
+
+    preds_normalized = preds_values * 1000
     preds_rounded = np.round(preds_normalized)
     preds_in_level = preds_rounded / 100
     preds_in_level_rounded = np.ceil(preds_in_level).flatten()
