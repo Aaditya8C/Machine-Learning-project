@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Slider } from "@mui/material";
 
 // MUI
 import Container from "@mui/material/Container";
@@ -63,20 +64,30 @@ const reverseAcneLevel = (level) => {
   }
 };
 
+// ... existing imports
 const Form = () => {
   const { state } = useLocation();
   if (state !== null) {
     data = state.data;
     if (data.type === "Oil") data.type = "Oily";
-    data.acne = reverseAcneLevel(data.acne); // reverse acne for frontend
+    data.acne = reverseAcneLevel(data.acne);
     console.log("Modified from backend: ", data);
   }
+  console.log("Datttta", data);
 
-  const { type, tone, acne } = data;
+  const { type, tone, acne, other_concerns = {} } = data;
 
   const [currType, setCurrType] = useState(type);
   const [currTone, setCurrTone] = useState(parseInt(tone));
   const [currAcne, setAcne] = useState(acne);
+  const [currBlackheads, setBlackheads] = useState(
+    other_concerns?.Blackheads || 0
+  );
+  const [currDarkspots, setDarkspots] = useState(
+    other_concerns?.Darkspots || 0
+  );
+  const [currWrinkles, setWrinkles] = useState(other_concerns?.Wrinkles || 0);
+
   const [features, setFeatures] = useState({
     normal: false,
     dry: false,
@@ -85,17 +96,14 @@ const Form = () => {
     acne: false,
     sensitive: false,
     "fine lines": false,
-    wrinkles: false,
     redness: false,
     dull: false,
     pore: false,
     pigmentation: false,
-    blackheads: false,
     whiteheads: false,
     blemishes: false,
     "dark circles": false,
     "eye bags": false,
-    "dark spots": false,
   });
 
   const handleChange = (event) => {
@@ -105,22 +113,17 @@ const Form = () => {
     });
   };
 
-  const handleTone = (e) => {
-    setCurrTone(e.target.value);
-  };
-
-  const handleType = (e) => {
-    setCurrType(e.target.value);
-  };
-
-  const handleAcne = (e) => {
-    setAcne(e.target.value);
-  };
+  const handleTone = (e) => setCurrTone(e.target.value);
+  const handleType = (e) => setCurrType(e.target.value);
+  const handleAcne = (e) => setAcne(e.target.value);
+  const handleBlackheads = (e) => setBlackheads(e.target.value);
+  const handleDarkspots = (e) => setDarkspots(e.target.value);
+  const handleWrinkles = (e) => setWrinkles(e.target.value);
 
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    const acneToSubmit = reverseAcneLevel(currAcne); // reverse acne before sending to backend
+    const acneToSubmit = reverseAcneLevel(currAcne);
 
     if (currType === "All") {
       features["normal"] = true;
@@ -131,48 +134,32 @@ const Form = () => {
       features[currType.toLowerCase()] = true;
     }
 
-    if (acneToSubmit !== "Low") {
-      features["acne"] = true;
-    }
+    // convert slider values to boolean (presence or absence)
+    features["blackheads"] = currBlackheads > 0;
+    features["dark spots"] = currDarkspots > 0;
+    features["wrinkles"] = currWrinkles > 0;
 
+    // convert all booleans to 1 or 0 for backend
     for (const [key, value] of Object.entries(features)) {
       features[key] = value ? 1 : 0;
     }
-
-    console.log({
-      features: features,
-      type: currType,
-      tone: currTone,
-      acne: acneToSubmit,
-    });
 
     putForm(features, currType, currTone, navigate);
   };
 
   return (
     <>
-      <Container
-        maxWidth="xs"
-        sx={{ marginTop: "2vh" }}
-        alignitems="center"
-        width="inherit"
-      >
-        <Typography variant="h5" component="div" textAlign="center">
+      <Container maxWidth="xs" sx={{ marginTop: "2vh" }} alignitems="center">
+        <Typography variant="h5" textAlign="center">
           Results
         </Typography>
 
-        <FormControl component="fieldset" sx={{ marginTop: "3vh" }}>
+        <FormControl sx={{ marginTop: "3vh" }}>
+          {/* Tone selection */}
           <Grid container>
             <Grid item xs={9}>
-              <InputLabel id="demo-simple-select-label">Tone</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={currTone}
-                label="Tone"
-                onChange={handleTone}
-                fullWidth
-              >
+              <InputLabel>Tone</InputLabel>
+              <Select value={currTone} onChange={handleTone} fullWidth>
                 {skinToneValues.map((value) => (
                   <MenuItem key={value} value={value}>
                     {value}
@@ -187,21 +174,16 @@ const Form = () => {
                   width: "3rem",
                   backgroundColor: skinToneColors[currTone - 1],
                   margin: "0 auto",
-                  justifySelf: "center",
                   borderRadius: "10%",
                 }}
-              ></div>
+              />
             </Grid>
           </Grid>
 
+          {/* Type selection */}
           <Grid marginTop="2vh">
-            <FormLabel component="legend">Type</FormLabel>
-            <RadioGroup
-              row
-              name="row-radio-buttons-group"
-              onChange={handleType}
-              value={currType}
-            >
+            <FormLabel>Type</FormLabel>
+            <RadioGroup row value={currType} onChange={handleType}>
               <Grid container>
                 {skinTypes.map((type) => (
                   <Grid item xs={6} key={type}>
@@ -216,21 +198,17 @@ const Form = () => {
             </RadioGroup>
           </Grid>
 
+          {/* Acne */}
           <Grid marginTop="2vh">
-            <FormLabel component="legend">Acne</FormLabel>
-            <RadioGroup
-              row
-              name="row-radio-buttons-group"
-              onChange={handleAcne}
-              value={currAcne}
-            >
+            <FormLabel>Acne</FormLabel>
+            <RadioGroup row value={currAcne} onChange={handleAcne}>
               <Grid container>
                 {acnes.map((ac) => (
                   <Grid item key={ac}>
                     <FormControlLabel
                       value={reverseAcneLevel(ac)}
                       control={<Radio />}
-                      label={ac} // display reversed label
+                      label={ac}
                     />
                   </Grid>
                 ))}
@@ -238,29 +216,83 @@ const Form = () => {
             </RadioGroup>
           </Grid>
 
+          {/* Blackheads Slider */}
           <Grid marginTop="2vh">
-            <FormLabel component="legend">
-              Specify other skin concerns
-            </FormLabel>
+            <FormLabel>Blackheads</FormLabel>
+            <Slider
+              value={currBlackheads}
+              onChange={(e, val) => setBlackheads(val)}
+              step={1}
+              marks
+              min={0}
+              max={10}
+              valueLabelDisplay="auto"
+            />
+          </Grid>
+
+          {/* Dark Spots Slider */}
+          <Grid marginTop="2vh">
+            <FormLabel>Dark Spots</FormLabel>
+            <Slider
+              value={currDarkspots}
+              onChange={(e, val) => setDarkspots(val)}
+              step={1}
+              marks
+              min={0}
+              max={10}
+              valueLabelDisplay="auto"
+            />
+          </Grid>
+
+          {/* Wrinkles Slider */}
+          <Grid marginTop="2vh">
+            <FormLabel>Wrinkles</FormLabel>
+            <Slider
+              value={currWrinkles}
+              onChange={(e, val) => setWrinkles(val)}
+              step={1}
+              marks
+              min={0}
+              max={10}
+              valueLabelDisplay="auto"
+            />
+          </Grid>
+
+          {/* Remaining concerns */}
+          <Grid marginTop="2vh">
+            <FormLabel>Specify other skin concerns</FormLabel>
             <Grid container>
-              {otherConcerns.map((concern) => (
-                <Grid item xs={6} key={concern}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={features[concern]}
-                        onChange={handleChange}
-                        name={concern}
-                      />
-                    }
-                    value={concern}
-                    label={concern.charAt(0).toUpperCase() + concern.slice(1)}
-                  />
-                </Grid>
-              ))}
+              {otherConcerns
+                .filter(
+                  (concern) =>
+                    !["wrinkles", "blackheads", "dark spots"].includes(concern)
+                )
+                .map((concern) => (
+                  <Grid item xs={6} key={concern}>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={features[concern]}
+                          onChange={handleChange}
+                          name={concern}
+                        />
+                      }
+                      label={concern.charAt(0).toUpperCase() + concern.slice(1)}
+                    />
+                  </Grid>
+                ))}
             </Grid>
           </Grid>
 
+          {/* Most Significant Problem */}
+          <Grid marginTop="2vh">
+            <Typography variant="body1" fontWeight="bold">
+              Most Significant Concern:{" "}
+              {other_concerns?.Most_significant_problem || "None"}
+            </Typography>
+          </Grid>
+
+          {/* Submit */}
           <Grid marginTop="2vh" item xs={12}>
             <Button onClick={handleSubmit} variant="contained" fullWidth>
               Submit
@@ -271,5 +303,7 @@ const Form = () => {
     </>
   );
 };
+
+// export default Form;
 
 export default Form;
